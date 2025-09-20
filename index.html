@@ -1,0 +1,444 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dem VPN - Secure Browser VPN</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        
+        body {
+            background: linear-gradient(135deg, #0f2027, #203a43, #2c5364);
+            color: #fff;
+            min-height: 100vh;
+            padding: 20px;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        
+        header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 20px 0;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .logo-icon {
+            width: 40px;
+            height: 40px;
+            background: linear-gradient(45deg, #3498db, #8e44ad);
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .logo-text {
+            font-size: 24px;
+            font-weight: 700;
+        }
+        
+        nav ul {
+            display: flex;
+            list-style: none;
+            gap: 30px;
+        }
+        
+        nav a {
+            color: #ddd;
+            text-decoration: none;
+            font-weight: 500;
+            transition: color 0.3s;
+        }
+        
+        nav a:hover {
+            color: #3498db;
+        }
+        
+        .auth-buttons {
+            display: flex;
+            gap: 15px;
+        }
+        
+        .btn {
+            padding: 10px 20px;
+            border-radius: 30px;
+            border: none;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        
+        .btn-outline {
+            background: transparent;
+            border: 2px solid #3498db;
+            color: #3498db;
+        }
+        
+        .btn-primary {
+            background: linear-gradient(45deg, #3498db, #2980b9);
+            color: white;
+        }
+        
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+        }
+        
+        .hero {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            text-align: center;
+            padding: 60px 0;
+        }
+        
+        .hero h1 {
+            font-size: 48px;
+            margin-bottom: 20px;
+            background: linear-gradient(45deg, #3498db, #8e44ad);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        
+        .hero p {
+            font-size: 18px;
+            max-width: 600px;
+            margin-bottom: 30px;
+            color: #ccc;
+        }
+        
+        .vpn-interface {
+            background: rgba(25, 35, 45, 0.8);
+            border-radius: 20px;
+            padding: 30px;
+            width: 100%;
+            max-width: 500px;
+            margin: 0 auto;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+        }
+        
+        .connection-status {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+        
+        .status-indicator {
+            width: 120px;
+            height: 120px;
+            border-radius: 50%;
+            margin: 0 auto 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: #e74c3c;
+            border: 5px solid rgba(255, 255, 255, 0.1);
+            transition: all 0.5s;
+        }
+        
+        .status-indicator.connected {
+            background: #2ecc71;
+        }
+        
+        .status-text {
+            font-size: 24px;
+            font-weight: 600;
+        }
+        
+        .server-info {
+            background: rgba(0, 0, 0, 0.2);
+            padding: 15px;
+            border-radius: 15px;
+            margin-bottom: 20px;
+        }
+        
+        .server-info p {
+            margin: 8px 0;
+            display: flex;
+            justify-content: space-between;
+        }
+        
+        .server-info span {
+            color: #3498db;
+        }
+        
+        .connection-controls {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+        
+        .server-select {
+            padding: 12px 20px;
+            border-radius: 30px;
+            background: rgba(0, 0, 0, 0.2);
+            border: 2px solid rgba(255, 255, 255, 0.1);
+            color: white;
+            font-size: 16px;
+        }
+        
+        .connect-btn {
+            padding: 15px;
+            border-radius: 30px;
+            border: none;
+            background: linear-gradient(45deg, #3498db, #2980b9);
+            color: white;
+            font-size: 18px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        
+        .connect-btn.connected {
+            background: linear-gradient(45deg, #e74c3c, #c0392b);
+        }
+        
+        .features {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 30px;
+            margin: 60px 0;
+        }
+        
+        .feature-card {
+            background: rgba(25, 35, 45, 0.8);
+            border-radius: 15px;
+            padding: 25px;
+            text-align: center;
+            transition: transform 0.3s;
+        }
+        
+        .feature-card:hover {
+            transform: translateY(-5px);
+        }
+        
+        .feature-icon {
+            width: 60px;
+            height: 60px;
+            background: linear-gradient(45deg, #3498db, #8e44ad);
+            border-radius: 15px;
+            margin: 0 auto 15px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 24px;
+        }
+        
+        .feature-card h3 {
+            margin-bottom: 15px;
+            font-size: 20px;
+        }
+        
+        .feature-card p {
+            color: #ccc;
+        }
+        
+        footer {
+            text-align: center;
+            padding: 30px 0;
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+            margin-top: 40px;
+        }
+        
+        @media (max-width: 768px) {
+            nav ul {
+                display: none;
+            }
+            
+            .hero h1 {
+                font-size: 36px;
+            }
+            
+            .vpn-interface {
+                padding: 20px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <div class="logo">
+                <div class="logo-icon">DV</div>
+                <div class="logo-text">Dem VPN</div>
+            </div>
+            <nav>
+                <ul>
+                    <li><a href="#">Features</a></li>
+                    <li><a href="#">Pricing</a></li>
+                    <li><a href="#">Servers</a></li>
+                    <li><a href="#">Support</a></li>
+                </ul>
+            </nav>
+            <div class="auth-buttons">
+                <button class="btn btn-outline">Log In</button>
+                <button class="btn btn-primary">Sign Up</button>
+            </div>
+        </header>
+        
+        <section class="hero">
+            <h1>Browse Privately with Dem VPN</h1>
+            <p>Protect your online privacy, bypass censorship, and access content from anywhere in the world with our secure browser-based VPN.</p>
+            
+            <div class="vpn-interface">
+                <div class="connection-status">
+                    <div class="status-indicator" id="statusIndicator">
+                        <i class="fas fa-lock"></i>
+                    </div>
+                    <div class="status-text" id="statusText">Disconnected</div>
+                </div>
+                
+                <div class="server-info">
+                    <p>Your IP: <span id="ipAddress">192.168.1.1</span></p>
+                    <p>Server: <span id="serverLocation">Not connected</span></p>
+                    <p>Data protected: <span id="dataProtected">0 MB</span></p>
+                </div>
+                
+                <div class="connection-controls">
+                    <select class="server-select" id="serverSelect">
+                        <option value="us">United States</option>
+                        <option value="uk">United Kingdom</option>
+                        <option value="de">Germany</option>
+                        <option value="jp">Japan</option>
+                        <option value="au">Australia</option>
+                    </select>
+                    
+                    <button class="connect-btn" id="connectButton">Connect Now</button>
+                </div>
+            </div>
+        </section>
+        
+        <section class="features">
+            <div class="feature-card">
+                <div class="feature-icon">🔒</div>
+                <h3>Military Grade Encryption</h3>
+                <p>Your data is protected with AES-256 encryption, ensuring your online activities remain private.</p>
+            </div>
+            
+            <div class="feature-card">
+                <div class="feature-icon">🌐</div>
+                <h3>Global Access</h3>
+                <p>Access content from around the world with servers in 50+ countries.</p>
+            </div>
+            
+            <div class="feature-card">
+                <div class="feature-icon">🚀</div>
+                <h3>Lightning Fast Speeds</h3>
+                <p>Our optimized servers ensure you get the fastest possible connection speeds.</p>
+            </div>
+        </section>
+        
+        <footer>
+            <p>© 2023 Dem VPN. All rights reserved. | Privacy Policy | Terms of Service</p>
+        </footer>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const connectButton = document.getElementById('connectButton');
+            const statusIndicator = document.getElementById('statusIndicator');
+            const statusText = document.getElementById('statusText');
+            const serverLocation = document.getElementById('serverLocation');
+            const ipAddress = document.getElementById('ipAddress');
+            const dataProtected = document.getElementById('dataProtected');
+            const serverSelect = document.getElementById('serverSelect');
+            
+            let isConnected = false;
+            let dataCounter = 0;
+            let dataInterval;
+            
+            // Generate a random IP address for demo purposes
+            function generateRandomIP() {
+                return `${Math.floor(Math.random() * 255)}.${Math.floor(Math.random() * 255)}.${Math.floor(Math.random() * 255)}.${Math.floor(Math.random() * 255)}`;
+            }
+            
+            // Update data protected counter
+            function updateDataCounter() {
+                dataCounter += Math.random() * 10;
+                dataProtected.textContent = `${dataCounter.toFixed(2)} MB`;
+            }
+            
+            // Connect to VPN
+            function connectVPN() {
+                isConnected = true;
+                statusIndicator.classList.add('connected');
+                statusText.textContent = 'Connected';
+                connectButton.textContent = 'Disconnect';
+                connectButton.classList.add('connected');
+                
+                const selectedServer = serverSelect.options[serverSelect.selectedIndex].text;
+                serverLocation.textContent = selectedServer;
+                
+                // Change IP address to a random one (simulation)
+                ipAddress.textContent = generateRandomIP();
+                
+                // Start data counter
+                dataCounter = 0;
+                dataInterval = setInterval(updateDataCounter, 1000);
+            }
+            
+            // Disconnect from VPN
+            function disconnectVPN() {
+                isConnected = false;
+                statusIndicator.classList.remove('connected');
+                statusText.textContent = 'Disconnected';
+                connectButton.textContent = 'Connect Now';
+                connectButton.classList.remove('connected');
+                
+                serverLocation.textContent = 'Not connected';
+                ipAddress.textContent = '192.168.1.1';
+                
+                // Stop data counter
+                clearInterval(dataInterval);
+                dataProtected.textContent = '0 MB';
+            }
+            
+            // Toggle connection
+            connectButton.addEventListener('click', function() {
+                if (isConnected) {
+                    disconnectVPN();
+                } else {
+                    connectVPN();
+                }
+            });
+            
+            // Simulate server change effect
+            serverSelect.addEventListener('change', function() {
+                if (isConnected) {
+                    // If connected and changing server, briefly show reconnecting
+                    statusText.textContent = 'Reconnecting...';
+                    
+                    setTimeout(function() {
+                        const selectedServer = serverSelect.options[serverSelect.selectedIndex].text;
+                        serverLocation.textContent = selectedServer;
+                        ipAddress.textContent = generateRandomIP();
+                        statusText.textContent = 'Connected';
+                    }, 1500);
+                }
+            });
+            
+            // Simulate login buttons
+            document.querySelectorAll('.btn-outline, .btn-primary').forEach(button => {
+                button.addEventListener('click', function() {
+                    alert('This would open a login/signup modal in a real application.');
+                });
+            });
+        });
+    </script>
+</body>
+</html>
